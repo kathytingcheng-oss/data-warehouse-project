@@ -1,9 +1,10 @@
 --Bronze Layer Data Quality Validation
---This script performs Data Quality (DQ) Checks on the bronze.crm_cust_info table to ensure data integrity before moving to the silver layer.
+--This script performs Data Quality (DQ) Checks on the bronze level tables to ensure data integrity before moving to the silver layer.
 
 USE DataWarehouse
 GO
 
+-- bronze.crm_cust_info table
 -- Check for NULLS or Duplicates in Primary Key
 -- Expectation: No result
 
@@ -35,3 +36,40 @@ FROM bronze.crm_cust_info
 
 SELECT DISTINCT cst_material_status
 FROM bronze.crm_cust_info
+
+
+-- bronze.crm_prd_info table
+-- Check for Nulls or Duplicates in Primary Key
+-- Expectation: No results
+
+SELECT
+prd_id,
+COUNT(*)
+FROM bronze.crm_prd_info
+GROUP BY prd_id
+HAVING COUNT(*) > 1 OR prd_id IS NULL;
+
+
+-- check for unwanted spaces
+-- Expactation: No results
+SELECT
+prd_nm
+FROM bronze.crm_prd_info
+WHERE prd_nm != TRIM(prd_nm);
+
+--check for NULLS or Negative Numbers
+-- Expactation: No results
+SELECT prd_cost
+FROM bronze.crm_prd_info
+WHERE prd_cost < 0 OR prd_cost IS NULL;
+
+-- Data standardization and Consistency
+SELECT DISTINCT prd_line
+FROM bronze.crm_prd_info
+
+-- Check for Valid Date Orders
+SELECT *
+FROM bronze.crm_prd_info
+WHERE prd_end_dt < prd_start_dt
+
+
