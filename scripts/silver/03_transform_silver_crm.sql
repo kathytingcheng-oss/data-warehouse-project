@@ -80,3 +80,24 @@ CAST (LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)-1 AS 
 FROM bronze.crm_prd_info
 
 
+---- silver.erp_cust_az12 Table Transformation
+INSERT INTO silver.erp_cust_az12 (
+    cid,
+    bdate,
+    gen
+)
+
+SELECT
+CASE WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid, 4, LEN(cid))
+     ELSE cid
+END cid,
+CASE WHEN bdate > GETDATE() THEN NULL
+     ELSE bdate
+END AS bdate,
+CASE 
+    WHEN UPPER(TRIM(REPLACE(REPLACE(gen, CHAR(10), ''), CHAR(13), ''))) IN ('F', 'FEMALE') THEN 'Female'
+    WHEN UPPER(TRIM(REPLACE(REPLACE(gen, CHAR(10), ''), CHAR(13), ''))) IN ('M', 'MALE') THEN 'Male'
+    ELSE 'n/a'
+END AS gen
+FROM bronze.erp_cust_az12
+
