@@ -81,3 +81,20 @@ WHERE prd_end_dt < prd_start_dt
 -- Final check the whole table
 SELECT *
 FROM silver.crm_prd_info
+
+-- CRM: silver.erp_cust_az12
+-- Validate the data quality
+-- Identify out of range date (customer orlder than 100 years or birthday in the future)
+SELECT DISTINCT
+bdate
+FROM silver.erp_cust_az12
+WHERE bdate < '1924-01-01' OR bdate > GETDATE()
+
+-- Data standardization & Consistensy 
+SELECT DISTINCT
+gen
+FROM silver.erp_cust_az12
+
+-- Final check the whole table
+SELECT * FROM silver.erp_cust_az12
+
