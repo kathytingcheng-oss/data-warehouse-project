@@ -73,3 +73,15 @@ FROM bronze.crm_prd_info
 WHERE prd_end_dt < prd_start_dt
 
 
+-- bronze layer table validation: bronze.erp_cust_az12
+-- Identify out of range date (customer orlder than 100 years or birthday in the future)
+-- Expectation: No results
+SELECT DISTINCT
+bdate
+FROM bronze.erp_cust_az12
+WHERE bdate < '1924-01-01' OR bdate > GETDATE()
+
+-- Data standardization & Consistensy 
+SELECT DISTINCT
+gen
+FROM bronze.erp_cust_az12
