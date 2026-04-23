@@ -5,6 +5,9 @@ USE DataWarehouse
 GO
 
 -- Customer Information Table Transformation
+PRINT '>> Truncating Table: silver.crm_cust_info'
+TRUNCATE TABLE silver.crm_cust_info;
+PRINT '>> Inserting Data Into:silver.crm_cust_info'
 
 INSERT INTO silver.crm_cust_info (
     cst_id,
@@ -81,6 +84,9 @@ FROM bronze.crm_prd_info
 
 
 ---- silver.erp_cust_az12 Table Transformation
+PRINT '>> Truncating Table: silver.erp_cust_az12'
+TRUNCATE TABLE silver.erp_cust_az12;
+PRINT '>> Inserting Data Into:silver.erp_cust_az12'
 INSERT INTO silver.erp_cust_az12 (
     cid,
     bdate,
@@ -101,7 +107,11 @@ CASE
 END AS gen
 FROM bronze.erp_cust_az12
 
+    
 ---- silver.erp_loc_a101 Table Transformation
+PRINT '>> Truncating Table: silver.erp_loc_a101'
+TRUNCATE TABLE silver.erp_loc_a101;
+PRINT '>> Inserting Data Into:silver.erp_loc_a101'
 INSERT INTO silver.erp_loc_a101 (cid, cntry)
 SELECT
 REPLACE(cid, '-', '') AS cid,
@@ -111,3 +121,17 @@ CASE WHEN TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), '')) = 'DE' THEN 
     ELSE TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), ''))
 END AS cntry
 FROM bronze.erp_loc_a101
+
+    
+-- silver.erp_px_cat_g1v2 Table Transformation
+PRINT '>> Truncating Table: silver.erp_px_cat_g1v2'
+TRUNCATE TABLE silver.erp_px_cat_g1v2;
+PRINT '>> Inserting Data Into:silver.erp_px_cat_g1v2'
+INSERT INTO silver.erp_px_cat_g1v2
+(id, cat, subcat, maintenance)
+SELECT
+id,
+cat,
+subcat,
+TRIM(REPLACE(REPLACE(maintenance, CHAR(13), ''), CHAR(10), '')) AS maintenance
+FROM bronze.erp_px_cat_g1v2
