@@ -98,3 +98,8 @@ FROM silver.erp_cust_az12
 -- Final check the whole table
 SELECT * FROM silver.erp_cust_az12
 
+-- ERP: silver.erp_loc_a101
+-- Final Check the whole table
+SELECT *
+FROM silver.erp_loc_a101
+
