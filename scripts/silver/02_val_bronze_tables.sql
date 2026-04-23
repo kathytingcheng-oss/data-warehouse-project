@@ -85,3 +85,30 @@ WHERE bdate < '1924-01-01' OR bdate > GETDATE()
 SELECT DISTINCT
 gen
 FROM bronze.erp_cust_az12
+
+  
+-- bronze layer table validation: bronze.erp_loc_a101
+-- Identify invalid values and data normalisation
+-- Compare cid
+SELECT cid FROM bronze.erp_loc_a101
+SELECT cst_key FROM silver.crm_cust_info
+  
+-- Handle invalid values: replace "-" to "" and compare the results
+SELECT
+REPLACE(cid,'-','') cid,
+cntry
+FROM bronze.erp_loc_a101
+WHERE REPLACE(cid,'-','') NOT IN
+(SELECT cst_key FROM silver.crm_cust_info)
+
+  -- Data Standardisation & Consistency
+SELECT DISTINCT
+cntry AS old_cntry,
+CASE WHEN TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), '')) = 'DE' THEN 'Germany'
+     WHEN TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), '')) IN ('US', 'USA') THEN 'United States'
+     WHEN TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), '')) = '' OR cntry IS NULL THEN 'n/a'
+     ELSE TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), ''))
+END AS cntry
+FROM bronze.erp_loc_a101
+ORDER BY cntry
+
