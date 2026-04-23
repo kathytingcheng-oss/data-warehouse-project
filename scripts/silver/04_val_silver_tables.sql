@@ -103,3 +103,7 @@ SELECT * FROM silver.erp_cust_az12
 SELECT *
 FROM silver.erp_loc_a101
 
+-- ERP: silver.erp_px_cat_g1v2
+-- Final Check the whole table
+SELECT *
+FROM silver.erp_px_cat_g1v2
