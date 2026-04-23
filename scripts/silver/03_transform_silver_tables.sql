@@ -101,3 +101,13 @@ CASE
 END AS gen
 FROM bronze.erp_cust_az12
 
+---- silver.erp_loc_a101 Table Transformation
+INSERT INTO silver.erp_loc_a101 (cid, cntry)
+SELECT
+REPLACE(cid, '-', '') AS cid,
+CASE WHEN TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), '')) = 'DE' THEN 'Germany'
+     WHEN TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), '')) IN ('US', 'USA') THEN 'United States'
+     WHEN TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), '')) = '' OR cntry IS NULL THEN 'n/a'
+    ELSE TRIM(REPLACE(REPLACE(cntry, CHAR(13), ''), CHAR(10), ''))
+END AS cntry
+FROM bronze.erp_loc_a101
